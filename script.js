@@ -16,8 +16,23 @@ function searchHandler(e) {
 	let userInput = input.value;
 	const results = search(userInput.toLowerCase());
 	showSuggestions(results, userInput);
-
 }
+
+//Display the first ten suggestions that contain user input text
+function showSuggestions(result, inputVal) {
+	const topTenResults = result.slice(0,10);
+	clearSuggestion();
+	if (inputVal !== ''){ //won't display suggestions when user input is empty
+		input.className = 'hasSuggestions';
+		suggestions.className = 'hasSuggestions';
+		for (let fruit of topTenResults){
+			const li = document.createElement('li');
+			li.innerHTML = boldText(fruit, inputVal);
+			suggestions.append(li);
+		}		
+	}
+}
+
 //This function takes the suggestion being displayed and user input text, and makes the first instance where input text is found in suggestion bold text
 function boldText(str, subStr){
 	let lowerCaseStr = str.toLowerCase();
@@ -29,27 +44,23 @@ function boldText(str, subStr){
 	
 }
 
-//Display the first five suggestions that contain user input text
-function showSuggestions(result, inputVal) {
-	const topFiveResults = result.slice(0,5);
+//Remove "hasSuggestion" class name and clear html of suggestion DIV
+function clearSuggestion() {
+	input.className = '';
+	suggestions.className = '';
 	suggestions.innerHTML = '';
-	if (inputVal !== ''){ //won't display suggestions when user input is empty
-		for (let fruit of topFiveResults){
-			const li = document.createElement('li');
-			li.innerHTML = boldText(fruit, inputVal);
-			suggestions.append(li);
-		}		
-	}
 }
 
-//handle click evenrt where the sugestion that is clicked on get displayed on search box
+//handle click evenrt where the sugestion that is clicked on get displayed on search box. Suggestions get cleared
 function useSuggestion(e) {
 	if(e.target.tagName === 'B'){
 		input.value = e.target.parentElement.innerText;
 	} else{
 		input.value = e.target.innerText;
 	}
+	clearSuggestion();
 }
+
 
 input.addEventListener('keyup', searchHandler);
 suggestions.addEventListener('click', useSuggestion);
